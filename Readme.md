@@ -28,5 +28,5 @@ This is a **Zero-Dependency Static Project**.
 *   **Stateless Protocol**: No user data is stored on disk, ensuring 100% privacy and security.
 
 ---
-**Developed with Precision by [Naman Gupta](https://github.com/Naman-27072004)**  
+**Developed with Precision by [Manan Sehgal](https://github.com/manansehgal6)**  
 *MIT Licensed* ⚖️
