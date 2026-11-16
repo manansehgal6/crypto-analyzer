@@ -1,0 +1,49 @@
+@startuml Deployment
+
+title Crypto Analyzer - Zero-Dependency Stateless Deployment Architecture
+
+node "Client Device (Desktop / Tablet / Mobile)" as clientDevice {
+  node "Modern Web Browser (Chrome, Safari, Firefox, Edge)" as browser {
+    artifact "Single Page App (index.html)" as spaApp
+    artifact "In-Memory JavaScript Execution Context" as jsContext
+    artifact "HTML5 Canvas (Chart.js)" as canvasObj
+  }
+}
+
+node "Static Hosting Node / CDN" as hostNode {
+  artifact "GitHub Pages / Netlify / Vercel" as staticHost {
+    file "index.html"
+    file "favicon.png"
+    file "Readme.md"
+    file ".github/workflows/static.yml"
+  }
+}
+
+cloud "Public CDN Infrastructure" as cdnNode {
+  artifact "Tailwind CSS CDN (cdn.tailwindcss.com)" as tailwindCdn
+  artifact "Chart.js CDN (cdn.jsdelivr.net)" as chartCdn
+  artifact "FontAwesome CDN (cdnjs.cloudflare.com)" as faCdn
+  artifact "Google Fonts (fonts.googleapis.com)" as gfontsCdn
+}
+
+cloud "Third-Party High-Frequency APIs" as apiCloud {
+  node "CoinGecko API Cluster" as coingeckoCluster {
+    artifact "CoinGecko v3 REST API\n(api.coingecko.com)" as coingeckoApi
+  }
+  node "RSS Aggregator Service" as rssCluster {
+    artifact "RSS2JSON API Gateway\n(api.rss2json.com)" as rssApi
+  }
+  node "News Feeds" as newsPublishers {
+    artifact "Bitcoin.com News RSS" as btcRss
+    artifact "CoinTelegraph RSS" as ctRss
+  }
+}
+
+hostNode --> browser : HTTPS / HTTP: Serve Static Bundle
+browser ..> cdnNode : HTTPS: Load Styles, Fonts & Chart.js
+jsContext --> coingeckoApi : HTTPS JSON Requests (Market, Chart, Movers)
+jsContext --> rssApi : HTTPS JSON Requests (Parsed Articles)
+rssApi --> btcRss : XML Ingestion
+rssApi --> ctRss : XML Ingestion
+
+@enduml

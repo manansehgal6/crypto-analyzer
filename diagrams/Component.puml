@@ -1,0 +1,48 @@
+@startuml Component
+
+title Crypto Analyzer - Component Diagram
+
+package "Client-Side SPA Architecture (Browser)" {
+  [Presentation Layer (index.html)] as UI
+  
+  package "Core Client Modules" {
+    [Search & Visualizer Controller] as SearchComp
+    [Market Movers Manager] as MoversComp
+    [Algorithmic Trend Engine] as PredictComp
+    [PnL Simulator Module] as PnLComp
+    [News Intelligence Streamer] as NewsComp
+  }
+
+  package "Client-Side Libraries (CDNs)" {
+    [Chart.js Engine] as ChartLib
+    [Tailwind CSS Runtime] as TailwindLib
+    [FontAwesome Icon Suite] as IconsLib
+  }
+}
+
+cloud "External REST & RSS Providers" {
+  [CoinGecko Public API v3] as CoinGecko
+  [RSS2JSON Parser Service] as RSS2JSON
+  [Bitcoin.com News Feed] as BTCNews
+  [CoinTelegraph RSS Feed] as CTNews
+}
+
+UI --> SearchComp : triggers search
+UI --> MoversComp : queries movers
+UI --> PredictComp : requests trend projection
+UI --> PnLComp : submits investment parameters
+UI --> NewsComp : displays feeds
+
+SearchComp --> ChartLib : renders price graph
+SearchComp --> CoinGecko : REST /coins/{id} & /market_chart
+MoversComp --> CoinGecko : REST /coins/markets (24h movers)
+PredictComp --> CoinGecko : REST /coins/{id}/market_chart
+
+NewsComp --> RSS2JSON : fetch parsed JSON
+RSS2JSON --> BTCNews : fetch XML feed
+RSS2JSON --> CTNews : fetch XML feed
+
+UI ..> TailwindLib : styled with glassmorphism classes
+UI ..> IconsLib : visual glyphs
+
+@enduml

@@ -1,0 +1,93 @@
+@startuml Menu_Flow
+
+title Crypto Analyzer - Navigation & Menu Flow Diagram
+
+[*] --> StickyNavBar : User visits Single Page Application
+
+state StickyNavBar {
+  state "Brand Logo: CryptoAnalyzer" as BrandLink
+  state "Home (#home)" as NavHome
+  state "Movers (#market-movers)" as NavMovers
+  state "Predict (#predict)" as NavPredict
+  state "P&L Calculator (#calculator)" as NavCalc
+  state "Learn (#learning)" as NavLearn
+  state "Intelligence (#news)" as NavNews
+  state "About (#about)" as NavAbout
+  state "Mobile Hamburger Menu" as MobileNav
+}
+
+state PageSections {
+  state "#home: Market Analysis Engine" as SecHome {
+    state "Search Input Field" as SearchBox
+    state "Search Button Click" as SearchAct
+    state "Asset Valuation Card" as AssetCard
+    state "Interactive Chart.js View" as ChartView
+    state "Historical 50-row Table" as TableView
+    SearchBox --> SearchAct
+    SearchAct --> AssetCard
+    AssetCard --> ChartView
+    AssetCard --> TableView
+  }
+
+  state "#market-movers: 24h Movers" as SecMovers {
+    state "Top 5 Gainers Card" as Gainers
+    state "Top 5 Losers Card" as Losers
+    state "Refresh 24h Data Button" as RefreshBtn
+    state "Click Mover Row" as ClickMover
+    Gainers --> ClickMover
+    Losers --> ClickMover
+    RefreshBtn --> Gainers
+    RefreshBtn --> Losers
+  }
+
+  state "#predict: Algorithmic Projections" as SecPredict {
+    state "Prediction Input" as PredInput
+    state "Analyze Trend Button" as PredAct
+    state "Forecast & Volatility Gap" as PredResult
+    PredInput --> PredAct
+    PredAct --> PredResult
+  }
+
+  state "#calculator: P&L Calculator" as SecCalc {
+    state "Input Fields (Buy, Sell, Investment, Fee)" as CalcInputs
+    state "Calculate Button / Live Input" as CalcAction
+    state "Summary Card (Net PnL, ROI, Fees)" as CalcSummary
+    state "Reset Button" as CalcReset
+    CalcInputs --> CalcAction
+    CalcAction --> CalcSummary
+    CalcReset --> CalcInputs
+  }
+
+  state "#learning: Crypto Learning Hub" as SecLearn {
+    state "Blockchain & Smart Contracts" as CardLearn1
+    state "Market Metrics & Indicators" as CardLearn2
+    state "Risk Management & Custody" as CardLearn3
+    state "Crypto Glossary Accordion" as Glossary
+  }
+
+  state "#news: Market Intelligence" as SecNews {
+    state "Streamed Articles List" as NewsList
+    state "Trending Signals Tags" as NewsTags
+    state "Sidebar News Quicklinks" as NewsSidebar
+    state "External News Article Link" as ExtNews
+    NewsList --> ExtNews
+    NewsSidebar --> ExtNews
+  }
+
+  state "#about: Platform Overview" as SecAbout {
+    state "Protocol Mission & Stats" as AboutStats
+  }
+}
+
+NavHome --> SecHome : smooth scroll
+NavMovers --> SecMovers : smooth scroll
+NavPredict --> SecPredict : smooth scroll
+NavCalc --> SecCalc : smooth scroll
+NavLearn --> SecLearn : smooth scroll
+NavNews --> SecNews : smooth scroll
+NavAbout --> SecAbout : smooth scroll
+
+ClickMover --> SearchBox : auto-populates symbol & triggers search
+SearchAct --> SecHome : focus result
+
+@enduml

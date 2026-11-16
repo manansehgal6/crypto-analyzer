@@ -1,0 +1,124 @@
+@startuml Class
+
+title Crypto Analyzer - Structural Class Diagram (SPA Object Architecture)
+
+class CryptoAnalyzerApp {
+  - uiHelper: UIHelper
+  - searchController: SearchController
+  - moversController: MarketMoversController
+  - predictionEngine: PredictionEngine
+  - pnlCalculator: PnLCalculator
+  - newsService: NewsService
+  + init(): void
+}
+
+class UIHelper {
+  + toggle(elementId: String, show: Boolean): void
+  + formatCurrency(value: Number): String
+  + formatPercentage(value: Number): String
+}
+
+class SearchController {
+  - searchInput: HTMLInputElement
+  - searchBtn: HTMLButtonElement
+  - searchResult: HTMLElement
+  - chartInstance: Chart
+  + handleSearch(query: String): Promise<void>
+  + setupChart(priceData: Array<[timestamp, price]>, container: HTMLElement): void
+  + setupTable(priceData: Array<[timestamp, price]>, container: HTMLElement): void
+}
+
+class MarketMoversController {
+  - topGainersList: HTMLElement
+  - topLosersList: HTMLElement
+  - refreshBtn: HTMLButtonElement
+  - fallbackMovers: Array<CoinMarketData>
+  + fetchTopMovers(): Promise<void>
+  + renderMovers(coins: Array<CoinMarketData>): void
+  + onMoverSelect(coinId: String): void
+}
+
+class PredictionEngine {
+  - predictInput: HTMLInputElement
+  - predictBtn: HTMLButtonElement
+  - predictResult: HTMLElement
+  + analyzeTrend(query: String): Promise<PredictionResult>
+  + computeMovingAverages(prices: Array<[timestamp, price]>): ForecastMetrics
+  + renderPrediction(result: PredictionResult): void
+}
+
+class PnLCalculator {
+  - buyPriceInput: HTMLInputElement
+  - sellPriceInput: HTMLInputElement
+  - investmentInput: HTMLInputElement
+  - feeInput: HTMLInputElement
+  - netPnlDisplay: HTMLElement
+  - roiDisplay: HTMLElement
+  - totalExitDisplay: HTMLElement
+  - unitsDisplay: HTMLElement
+  - totalFeesDisplay: HTMLElement
+  - badgeDisplay: HTMLElement
+  + computePnL(): CalculationResult
+  + resetForm(): void
+  + updateUI(res: CalculationResult): void
+}
+
+class NewsService {
+  - newsContainer: HTMLElement
+  - sidebarNews: HTMLElement
+  - rssEndpoints: Array<String>
+  + fetchNews(): Promise<void>
+  + sanitizeSnippet(html: String): String
+  + renderNewsArticles(articles: Array<NewsArticle>): void
+}
+
+class CoinGeckoGateway {
+  - baseUrl: String = "https://api.coingecko.com/api/v3"
+  + getCoinDetails(id: String): Promise<CoinDetail>
+  + getMarketChart(id: String, vsCurrency: String, days: Number): Promise<ChartData>
+  + getTopMarkets(limit: Number): Promise<Array<CoinMarketData>>
+}
+
+class RSS2JSONGateway {
+  - apiUrl: String = "https://api.rss2json.com/v1/api.json"
+  + parseFeed(rssUrl: String): Promise<FeedResponse>
+}
+
+class CalculationResult {
+  + unitsAcquired: Number
+  + grossExitValue: Number
+  + buyFeeAmount: Number
+  + sellFeeAmount: Number
+  + totalFees: Number
+  + netExitValue: Number
+  + netProfit: Number
+  + roi: Number
+  + isProfit: Boolean
+}
+
+class PredictionResult {
+  + coinId: String
+  + lastPrice: Number
+  + projectedPrice: Number
+  + shortTermMA: Number
+  + longTermMA: Number
+  + volatilityGap: Number
+  + sentiment: String
+  + marketShift: String
+}
+
+CryptoAnalyzerApp --> UIHelper
+CryptoAnalyzerApp --> SearchController
+CryptoAnalyzerApp --> MarketMoversController
+CryptoAnalyzerApp --> PredictionEngine
+CryptoAnalyzerApp --> PnLCalculator
+CryptoAnalyzerApp --> NewsService
+
+SearchController ..> CoinGeckoGateway : uses
+MarketMoversController ..> CoinGeckoGateway : uses
+PredictionEngine ..> CoinGeckoGateway : uses
+PredictionEngine ..> PredictionResult : produces
+PnLCalculator ..> CalculationResult : produces
+NewsService ..> RSS2JSONGateway : uses
+
+@enduml

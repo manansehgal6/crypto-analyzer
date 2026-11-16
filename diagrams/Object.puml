@@ -1,0 +1,66 @@
+@startuml Object
+
+title Crypto Analyzer - Concrete Runtime Object Instance Diagram
+
+object "bitcoinAsset : CryptoAsset" as btc {
+  id = "bitcoin"
+  name = "Bitcoin"
+  symbol = "BTC"
+  market_cap_rank = 1
+  image = "https://assets.coingecko.com/.../bitcoin.png"
+}
+
+object "btcMarketData : MarketData" as btcMarket {
+  current_price_usd = 67850.00
+  high_24h_usd = 68400.00
+  low_24h_usd = 66200.00
+  market_cap_usd = 1335000000000
+  price_change_percentage_24h = +3.42
+}
+
+object "btcChartConfig : Chart" as chartObj {
+  type = "line"
+  label = "USD"
+  borderColor = "#22d3ee"
+  tension = 0.4
+  dataPointsCount = 365
+}
+
+object "btcTrendForecast : TrendProjection" as btcTrend {
+  lastPrice = 67850.00
+  ma7 = 67200.00
+  ma365 = 58400.00
+  shift = 1257.14
+  projectedPrice = 69107.14
+  volatilityGap = "15.1%"
+  sentiment = "Bullish"
+  marketShift = "Expansion"
+}
+
+object "userSimulation : PnLSimulation" as pnlSim {
+  buyPrice = 50000.00
+  sellPrice = 68000.00
+  investment = 1000.00
+  feePercent = 0.10
+  unitsAcquired = 0.01998
+  grossExitValue = 1358.64
+  netExitValue = 1357.28
+  totalFees = 2.36
+  netPnl = +357.28
+  roi = +35.73%
+  statusBadge = "Net Profit"
+}
+
+object "intelArticle : NewsArticle" as newsItem {
+  feedTitle = "Bitcoin.com"
+  title = "Institutional Bitcoin Inflows Surge Past Highs"
+  link = "https://news.bitcoin.com/institutional-inflows-surge"
+  pubDate = "2026-11-16"
+  thumbnail = "https://.../btc-news.jpg"
+}
+
+btc --> btcMarket : provides current metrics
+btc --> chartObj : visualizes 365d prices
+btc --> btcTrend : analyzed by Moving Averages
+pnlSim ..> btc : simulates holding
+@enduml

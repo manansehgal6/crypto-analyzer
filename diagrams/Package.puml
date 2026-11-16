@@ -1,0 +1,67 @@
+@startuml Package
+
+title Crypto Analyzer - Package & Module Architecture
+
+package "Presentation & Styling" as PresPkg {
+  component [index.html (Semantic Structure)] as HtmlApp
+  component [Tailwind CSS (Glassmorphism & Gradients)] as TailwindUI
+  component [FontAwesome 6 Icon Suite] as FAIcon
+  component [Outfit Typography] as Typography
+}
+
+package "Client Business Logic" as ClientLogic {
+  package "Search & Visualization" as SearchSubpkg {
+    component [SearchHandler] as SH
+    component [ChartRenderer (Chart.js wrapper)] as CR
+    component [HistoricalTableBuilder] as HTB
+  }
+
+  package "Market Intelligence Engine" as IntelSubpkg {
+    component [MoversSynchronizer] as MS
+    component [FallbackMoversDataset] as FMD
+    component [AlgorithmicTrendPredictor] as ATP
+    component [MovingAverageCalculator] as MAC
+  }
+
+  package "Financial Analysis" as FinSubpkg {
+    component [PnLCalculator] as PnLC
+    component [FeeDeductionEngine] as FDE
+    component [ROIModel] as ROIM
+  }
+
+  package "News & Content Syndication" as NewsSubpkg {
+    component [RSSFeedConsumer] as RFC
+    component [HTMLSanitizer] as HS
+    component [SidebarCurator] as SC
+  }
+}
+
+package "External Integrations" as ExtInteg {
+  package "CoinGecko V3 Gateway" as CGGateway {
+    component [Coins Endpoint (/coins/{id})] as CGE_Coins
+    component [Market Chart Endpoint (/market_chart)] as CGE_Chart
+    component [Top Markets Endpoint (/coins/markets)] as CGE_Markets
+  }
+
+  package "News Syndication Gateway" as NewsGateway {
+    component [RSS2JSON API] as RSSApi
+    component [Bitcoin.com Feed] as BTCFeed
+    component [CoinTelegraph Feed] as CTFeed
+  }
+}
+
+package "Build & Deployment" as BuildPkg {
+  component [.github/workflows/static.yml (GitHub Actions)] as GHAction
+  component [Git Repository Configuration (.gitignore)] as GitIgnore
+}
+
+PresPkg ..> ClientLogic : binds DOM events
+SearchSubpkg --> CGE_Coins
+SearchSubpkg --> CGE_Chart
+IntelSubpkg --> CGE_Markets
+IntelSubpkg ..> FMD : failover
+NewsSubpkg --> RSSApi
+RSSApi --> BTCFeed
+RSSApi --> CTFeed
+
+@enduml

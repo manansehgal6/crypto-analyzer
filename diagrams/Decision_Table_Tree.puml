@@ -1,0 +1,43 @@
+@startuml Decision_Table_Tree
+
+title Crypto Analyzer - Algorithmic Trend Decision Tree & Logic
+
+start
+
+:Receive 365-day Historical Price Array;
+
+if (Prices Array Length >= 365?) then (yes)
+  :Compute MA7 = Average of last 7 daily prices;
+  :Compute MA365 = Average of entire 365 daily prices;
+  :Calculate Shift = (MA7 - MA365) / 7;
+  :Calculate Projected Price = Last_Price + Shift;
+  :Calculate Volatility Gap = |(MA7 - MA365) / MA365| * 100;
+
+  if (Projected Price > Last Price?) then (yes: Next > Last)
+    :Sentiment = "Bullish Momentum";
+    :Market Shift = "Expansion";
+    :Badge Color = Emerald Green (#34d399);
+    :Render Expansion Card with Next Valuation;
+  else (no: Next <= Last)
+    :Sentiment = "Bearish Momentum";
+    :Market Shift = "Contraction";
+    :Badge Color = Rose Red (#fb7185);
+    :Render Contraction Card with Next Valuation;
+  endif
+
+else (no / Network Error)
+  :Display "Engine synchronization timeout";
+  :Keep previous state intact;
+endif
+
+stop
+
+legend right
+  |= Condition |= Outcome 1 |= Outcome 2 |
+  | Price Shift | Positive (MA7 > MA365) | Negative (MA7 <= MA365) |
+  | Sentiment | Bullish Momentum | Bearish Momentum |
+  | Market State | Expansion Phase | Contraction Phase |
+  | Visual Tone | Emerald Accent | Rose Accent |
+endlegend
+
+@enduml

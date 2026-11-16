@@ -1,0 +1,43 @@
+@startuml Timing
+
+title Crypto Analyzer - Component Execution Timing Diagram
+
+robust "DOM View State" as DOM
+robust "Search Loader" as Loader
+concise "CoinGecko Network" as API
+concise "Chart.js Renderer" as Chart
+
+@0
+DOM is Ready
+Loader is Hidden
+API is Idle
+Chart is Idle
+
+@100
+DOM is SearchTriggered
+Loader is Visible
+API is CoinDetailsRequest
+
+@300
+API is MarketChartRequest
+DOM is DetailsRendered
+
+@550
+API is Idle
+Loader is Hidden
+Chart is Rendering
+DOM is ChartMounted
+
+@700
+Chart is Idle
+DOM is Interactive
+
+@850
+DOM is PredictTriggered
+API is PredictChartRequest
+
+@1100
+API is Idle
+DOM is ForecastRendered
+
+@enduml

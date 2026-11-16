@@ -1,0 +1,69 @@
+@startuml Structure_Chart
+
+title Crypto Analyzer - Procedural Structure Chart
+
+rectangle "Crypto Analyzer Master Suite (Root)" as Root
+
+rectangle "1. Search & Visualizer Module" as M1
+rectangle "2. Market Movers Module" as M2
+rectangle "3. Trend Forecasting Engine" as M3
+rectangle "4. P&L Calculator Module" as M4
+rectangle "5. News Intelligence Engine" as M5
+
+Root --> M1
+Root --> M2
+Root --> M3
+Root --> M4
+Root --> M5
+
+rectangle "Fetch Asset Details (CoinGecko)" as M1_1
+rectangle "Fetch 365d Market Chart" as M1_2
+rectangle "Setup Line Chart (Chart.js)" as M1_3
+rectangle "Populate Price History Table" as M1_4
+
+M1 --> M1_1
+M1 --> M1_2
+M1 --> M1_3
+M1 --> M1_4
+
+rectangle "Fetch Top 50 Coin Markets" as M2_1
+rectangle "Filter & Sort Gainers / Losers" as M2_2
+rectangle "Render Mover Cards" as M2_3
+rectangle "Fallback Dataset Loader" as M2_4
+
+M2 --> M2_1
+M2 --> M2_2
+M2 --> M2_3
+M2 ..> M2_4 : exception branch
+
+rectangle "Fetch Historical Prices" as M3_1
+rectangle "Calculate 7-Day MA (MA7)" as M3_2
+rectangle "Calculate 365-Day MA (MA365)" as M3_3
+rectangle "Determine Sentiment & Shift" as M3_4
+
+M3 --> M3_1
+M3 --> M3_2
+M3 --> M3_3
+M3 --> M3_4
+
+rectangle "Read & Validate Input Numbers" as M4_1
+rectangle "Deduct Buy Fee & Compute Units" as M4_2
+rectangle "Compute Gross/Net Exit & Sell Fee" as M4_3
+rectangle "Compute Net PnL & ROI %" as M4_4
+rectangle "Update Badges & Display" as M4_5
+
+M4 --> M4_1
+M4 --> M4_2
+M4 --> M4_3
+M4 --> M4_4
+M4 --> M4_5
+
+rectangle "Fetch RSS Feeds via RSS2JSON" as M5_1
+rectangle "Sanitize HTML & Truncate Text" as M5_2
+rectangle "Render Stream & Sidebar Cards" as M5_3
+
+M5 --> M5_1
+M5 --> M5_2
+M5 --> M5_3
+
+@enduml

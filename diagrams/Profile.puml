@@ -1,0 +1,45 @@
+@startuml Profile
+
+title Crypto Analyzer - UML Profile Definition
+
+package "<<profile>> CryptoAnalyticsProfile" {
+  
+  class "<<metaclass>> Class" as UMLClass
+  class "<<metaclass>> Component" as UMLComponent
+  class "<<metaclass>> Operation" as UMLOperation
+
+  class "<<stereotype>>\nStatelessClient" <<stereotype>> {
+    + isClientOnly: Boolean = true
+    + storagePolicy: String = "VolatileInMemory"
+  }
+
+  class "<<stereotype>>\nFinancialSimulator" <<stereotype>> {
+    + defaultFeePct: Double = 0.1
+    + roundingPrecision: Integer = 2
+  }
+
+  class "<<stereotype>>\nAlgorithmicPredictor" <<stereotype>> {
+    + shortTermPeriodDays: Integer = 7
+    + longTermPeriodDays: Integer = 365
+    + formula: String = "(MA7 - MA365) / 7"
+  }
+
+  class "<<stereotype>>\nExternalDataGateway" <<stereotype>> {
+    + provider: String
+    + rateLimitStrategy: String = "FallbackCuratedData"
+  }
+
+  class "<<stereotype>>\nGlassmorphismUI" <<stereotype>> {
+    + backdropFilter: String = "blur-xl"
+    + bgOpacity: Double = 0.05
+    + borderColor: String = "white/10"
+  }
+
+  UMLClass <|-- "<<stereotype>>\nFinancialSimulator"
+  UMLClass <|-- "<<stereotype>>\nAlgorithmicPredictor"
+  UMLComponent <|-- "<<stereotype>>\nStatelessClient"
+  UMLComponent <|-- "<<stereotype>>\nExternalDataGateway"
+  UMLComponent <|-- "<<stereotype>>\nGlassmorphismUI"
+}
+
+@enduml

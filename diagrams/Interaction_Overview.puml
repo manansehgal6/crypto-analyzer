@@ -1,0 +1,52 @@
+@startuml Interaction_Overview
+
+title Crypto Analyzer - Interaction Overview Diagram
+
+start
+
+:Page Loading & Component Bootstrap;
+
+partition "Initial Parallel Lifecycle" {
+  fork
+    :Fetch & Render Top 24h Movers (or Fallback);
+  fork again
+    :Fetch & Stream News Intelligence Feeds;
+  end fork
+}
+
+repeat
+  :User triggers interaction flow;
+  
+  if (Selected Interaction) then (Search & Chart)
+    partition "sd: Search and Chart Interaction" {
+      :Input Query (e.g. bitcoin);
+      :Fetch Coin Metadata;
+      :Fetch 365d Price Array;
+      :Draw Chart.js Line Chart;
+      :Populate Price History Table;
+    }
+  else if (Selected Interaction) then (Algorithmic Prediction)
+    partition "sd: Trend Prediction Interaction" {
+      :Input Asset Query;
+      :Fetch 365d Market History;
+      :Compute MA7, MA365, Delta Shift;
+      :Display Bullish/Bearish Expansion Card;
+    }
+  else if (Selected Interaction) then (P&L Simulation)
+    partition "sd: Financial Calculator Interaction" {
+      :Read Buy, Sell, Investment, Fee Inputs;
+      :Calculate Net Profit/Loss & ROI;
+      :Update Summary & Result Badges;
+    }
+  else (Movers Shortcut)
+    partition "sd: Quick Mover Drilldown" {
+      :Click Mover Row;
+      :Pass ID to Search Field;
+      :Auto-trigger Search & Scroll;
+    }
+  endif
+
+repeat while (Application Active)
+
+stop
+@enduml

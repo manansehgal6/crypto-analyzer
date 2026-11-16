@@ -1,0 +1,35 @@
+@startuml Communication
+
+title Crypto Analyzer - Communication Diagram (Message Collaborations)
+
+actor "User" as user
+participant ":UI / DOM View" as view
+participant ":SearchController" as searchCtrl
+participant ":PredictionEngine" as predEngine
+participant ":PnLCalculator" as pnlCalc
+participant ":CoinGeckoGateway" as cgGateway
+participant ":Chart.js Canvas" as chart
+
+user -> view : 1. Submit Asset Query
+view -> searchCtrl : 1.1 Trigger handleSearch(token)
+searchCtrl -> view : 1.2 toggle('search-loader', true)
+searchCtrl -> cgGateway : 1.3 getCoinDetails(token)
+cgGateway --> searchCtrl : 1.4 Return Coin Metadata
+searchCtrl -> cgGateway : 1.5 getMarketChart(token, 365)
+cgGateway --> searchCtrl : 1.6 Return 365d Price Array
+searchCtrl -> chart : 1.7 new Chart(ctx, priceData)
+searchCtrl -> view : 1.8 Render Card & Historical Table
+
+user -> view : 2. Enter Trend Query
+view -> predEngine : 2.1 Trigger analyzeTrend(token)
+predEngine -> cgGateway : 2.2 fetch market_chart(token)
+cgGateway --> predEngine : 2.3 Return 365d Prices
+predEngine -> predEngine : 2.4 Calculate MA7, MA365, Shift
+predEngine -> view : 2.5 Render Projection Card (Bullish/Bearish)
+
+user -> view : 3. Enter Buy/Sell/Invest/Fee Values
+view -> pnlCalc : 3.1 Trigger computePnL()
+pnlCalc -> pnlCalc : 3.2 Compute Fees, Net Exit, ROI
+pnlCalc -> view : 3.3 Update Net PnL, ROI & Badge
+
+@enduml

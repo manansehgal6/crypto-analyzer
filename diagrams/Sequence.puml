@@ -1,0 +1,36 @@
+@startuml Sequence
+
+title Crypto Analyzer - End-to-End Search & Charting Sequence Diagram
+
+autonumber
+actor "User" as user
+participant "index.html (DOM)" as dom
+participant "Search Event Handler" as handler
+participant "CoinGecko API" as api
+participant "Chart.js Library" as chart
+
+user -> dom : Enters "solana" in #crypto-input & clicks #search-button
+dom -> handler : Dispatch click event
+handler -> dom : toggle('search-loader', true)
+handler -> dom : Clear previous #crypto-result
+
+handler -> api : GET /api/v3/coins/solana
+alt API Call Success
+  api --> handler : 200 OK (Metadata, image, current_price, 24h_high/low, cap)
+  handler -> dom : Inject HTML template with coin metrics
+  
+  handler -> api : GET /api/v3/coins/solana/market_chart?days=365
+  api --> handler : 200 OK (365 daily timestamped prices)
+  
+  handler -> chart : new Chart(ctx, { type: 'line', data: prices })
+  chart --> dom : Render smooth interactive canvas graph
+  
+  handler -> dom : Build and append top 50 price rows in #price-table-body
+  handler -> dom : toggle('search-loader', false)
+else API Rate Limit / Network Failure
+  api --> handler : 429 Too Many Requests / Network Error
+  handler -> dom : toggle('search-loader', false)
+  handler -> dom : Render "Asset synchronization failure." warning banner
+end
+
+@enduml

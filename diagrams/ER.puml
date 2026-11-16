@@ -1,0 +1,78 @@
+@startuml ER
+
+title Crypto Analyzer - Entity-Relationship Diagram (Data Model Schema)
+
+entity "CryptoAsset" as asset {
+  * id : string <<PK>>
+  --
+  * name : string
+  * symbol : string
+  * image_url : string
+  * market_cap_rank : integer
+  * genesis_date : string
+}
+
+entity "MarketData" as market {
+  * asset_id : string <<FK>>
+  --
+  * current_price_usd : float
+  * high_24h_usd : float
+  * low_24h_usd : float
+  * market_cap_usd : float
+  * price_change_percentage_24h : float
+  * last_updated : timestamp
+}
+
+entity "HistoricalPricePoint" as history {
+  * id : integer <<PK, auto>>
+  * asset_id : string <<FK>>
+  --
+  * timestamp : bigint
+  * price_usd : float
+}
+
+entity "TrendProjection" as trend {
+  * asset_id : string <<FK>>
+  --
+  * current_price : float
+  * ma_7_day : float
+  * ma_365_day : float
+  * shift_delta : float
+  * projected_price : float
+  * volatility_gap_pct : float
+  * sentiment : string (Bullish / Bearish)
+  * market_shift : string (Expansion / Contraction)
+}
+
+entity "PnLSimulation" as pnl {
+  * simulation_id : string <<PK>>
+  --
+  * buy_price : float
+  * sell_price : float
+  * investment_amount : float
+  * trading_fee_pct : float
+  * units_acquired : float
+  * gross_exit_value : float
+  * net_exit_value : float
+  * total_fees_paid : float
+  * net_pnl : float
+  * roi_percentage : float
+  * outcome_status : string (Net Profit / Net Loss)
+}
+
+entity "NewsArticle" as news {
+  * article_guid : string <<PK>>
+  --
+  * source_feed : string (Bitcoin.com / CoinTelegraph)
+  * title : string
+  * link_url : string
+  * pub_date : timestamp
+  * thumbnail_url : string
+  * description_snippet : string
+}
+
+asset ||--|| market : "has current"
+asset ||--o{ history : "tracks 365 daily points"
+asset ||--o| trend : "evaluates"
+pnl ||--o| asset : "simulates trade on"
+@enduml

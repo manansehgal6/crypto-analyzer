@@ -1,0 +1,57 @@
+@startuml Use_Case
+
+title Crypto Analyzer - Use Case Diagram
+
+left to right direction
+
+actor "Crypto Trader / User" as user
+actor "CoinGecko API" as api
+actor "RSS2JSON Service" as rss
+
+rectangle "Crypto Analyzer Suite (SPA)" {
+  usecase "Search Digital Asset" as UC1
+  usecase "View Real-time Metrics & 24h Delta" as UC2
+  usecase "Inspect 365-day Price Chart" as UC3
+  usecase "Browse Historical Price Table" as UC4
+  
+  usecase "Monitor 24h Market Movers" as UC5
+  usecase "Refresh 24h Movers Data" as UC6
+  usecase "Click Mover to Drill Down" as UC7
+  
+  usecase "Run Algorithmic Trend Prediction" as UC8
+  usecase "Evaluate Moving Averages (MA7 vs MA365)" as UC9
+  
+  usecase "Simulate Profit & Loss (P&L)" as UC10
+  usecase "Calculate Trading Fees & ROI" as UC11
+  
+  usecase "Read Crypto Knowledge Hub" as UC12
+  usecase "Stream Breaking News Intel" as UC13
+}
+
+user --> UC1
+user --> UC5
+user --> UC6
+user --> UC7
+user --> UC8
+user --> UC10
+user --> UC12
+user --> UC13
+
+UC1 ..> UC2 : <<includes>>
+UC1 ..> UC3 : <<includes>>
+UC1 ..> UC4 : <<includes>>
+
+UC7 ..> UC1 : <<invokes>>
+UC5 ..> UC6 : <<extends>>
+
+UC8 ..> UC9 : <<includes>>
+UC10 ..> UC11 : <<includes>>
+
+UC2 ..> api : <<fetches data>>
+UC3 ..> api : <<fetches history>>
+UC5 ..> api : <<fetches markets>>
+UC8 ..> api : <<fetches prices>>
+
+UC13 ..> rss : <<fetches feeds>>
+
+@enduml

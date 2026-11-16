@@ -1,0 +1,51 @@
+@startuml Composite_Structure
+
+title Crypto Analyzer - Composite Structure Diagram
+
+node "CryptoAnalyzerSPA : Browser Runtime" as System {
+  portin "DOM Events" as pDOM
+  portout "Fetch API" as pHTTP
+
+  package "Search & Charting Subsystem" {
+    component [SearchInputHandler] as SIH
+    component [HistoricalDataParser] as HDP
+    component [ChartRenderer] as CR
+    SIH --> HDP
+    HDP --> CR
+  }
+
+  package "Predictive Modeling Subsystem" {
+    component [TrendQueryHandler] as TQH
+    component [MovingAverageCalculator] as MAC
+    component [SentimentClassifier] as SC
+    TQH --> MAC
+    MAC --> SC
+  }
+
+  package "PnL Financial Subsystem" {
+    component [PnLFormValidator] as PFV
+    component [FeeCalculator] as FC
+    component [ROIComputer] as ROIC
+    PFV --> FC
+    FC --> ROIC
+  }
+
+  package "Movers & Intel Subsystem" {
+    component [MoversPoller] as MP
+    component [FallbackProvider] as FP
+    component [NewsFeedConsumer] as NFC
+    MP ..> FP : failover
+  }
+}
+
+pDOM --> SIH
+pDOM --> TQH
+pDOM --> PFV
+pDOM --> MP
+
+HDP --> pHTTP
+TQH --> pHTTP
+MP --> pHTTP
+NFC --> pHTTP
+
+@enduml

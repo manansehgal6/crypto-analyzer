@@ -1,0 +1,75 @@
+@startuml Activity
+
+title Crypto Analyzer - User Activity Diagram
+
+start
+
+:User opens Crypto Analyzer SPA;
+fork
+  :Initialize 24h Market Movers;
+  :Fetch top 50 markets from CoinGecko API;
+  if (CoinGecko API call succeeds?) then (yes)
+    :Render Top 5 Gainers & Losers;
+  else (rate-limited / error)
+    :Load Fallback Curated Movers Dataset;
+    :Render Fallback Gainers & Losers;
+  endif
+fork again
+  :Stream Market Intelligence;
+  :Fetch RSS feeds from Bitcoin.com & CoinTelegraph;
+  :Convert feeds to JSON via RSS2JSON API;
+  :Render Main Intelligence & Sidebar Highlights;
+end fork
+
+repeat
+  :User navigates through Suite sections;
+  
+  if (User action?) then (Search Asset)
+    :Input crypto asset symbol/name;
+    :Trigger Search Event;
+    :Display Search Loader;
+    :Fetch asset metadata & 365-day historical data;
+    if (Fetch Successful?) then (yes)
+      :Render Token Details & 24h Metrics;
+      :Plot 365-Day Price Curve via Chart.js;
+      :Populate Recent Price Table;
+    else (error)
+      :Display "Asset synchronization failure";
+    endif
+
+  else if (Predict Trend) then
+    :Input asset query in Predict section;
+    :Trigger Trend Analysis;
+    :Display Brain Spinner Loader;
+    :Fetch 365-day price history;
+    if (Data Available?) then (yes)
+      :Compute 7-day Moving Average (MA7);
+      :Compute 365-day Moving Average (MA365);
+      :Calculate Shift = (MA7 - MA365) / 7;
+      :Determine Next Projected Price & Bullish/Bearish Sentiment;
+      :Render Algorithmic Forecast Card;
+    else (error)
+      :Display "Engine synchronization timeout";
+    endif
+
+  else if (Calculate P&L) then
+    :Enter Entry Price, Exit Price, Investment & Fees;
+    :Calculate buy/sell side fees;
+    :Compute Acquired Units, Net Exit Value, Net PnL & ROI;
+    :Render Profit/Loss Badge, Net Figures, and Breakdown;
+
+  else if (Click Mover Card) then
+    :Capture selected coin ID;
+    :Populate Search Input;
+    :Trigger Search & Scroll to Result;
+
+  else (Browse Learning / Intel)
+    :Read Blockchain/TA Glossary or click External News links;
+  endif
+
+backward: Continue using analyzer;
+repeat while (User remains on page?) is (yes)
+->no;
+
+stop
+@enduml

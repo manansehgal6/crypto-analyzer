@@ -1,0 +1,43 @@
+@startuml DFD
+
+title Crypto Analyzer - Data Flow Diagram (Level 1 DFD)
+
+actor "User" as user
+cloud "CoinGecko API v3" as coinGecko
+cloud "RSS2JSON Service" as rssService
+database "In-Memory SPA State\n(Volatile/Stateless)" as memoryStore
+
+rectangle "1.0 Asset Search & Visualization" as P1
+rectangle "2.0 24h Movers Sync & Fallback" as P2
+rectangle "3.0 Algorithmic Moving Average Projection" as P3
+rectangle "4.0 P&L and ROI Calculation" as P4
+rectangle "5.0 News Aggregation & Sanitization" as P5
+
+user --> P1 : Enters Token Name / Ticker
+P1 --> coinGecko : GET /coins/{id}\nGET /market_chart?days=365
+coinGecko --> P1 : Coin details, market data & price array
+P1 --> memoryStore : Store chart dataset
+P1 --> user : Render 365d Line Chart & Historical Table
+
+user --> P2 : Clicks "Refresh 24h Data" / Page Load
+P2 --> coinGecko : GET /coins/markets?order=market_cap_desc
+coinGecko --> P2 : Top 50 Coin Markets
+P2 ..> memoryStore : Cache fallback list on failure
+P2 --> user : Render Top 5 Gainers & Top 5 Losers
+
+user --> P3 : Enters Asset for Trend Analysis
+P3 --> coinGecko : GET /coins/{id}/market_chart?days=365
+coinGecko --> P3 : 365-day Price Timeline
+P3 --> P3 : Compute MA7, MA365, Shift & Sentiment
+P3 --> user : Display Expansion/Contraction Forecast
+
+user --> P4 : Enters Buy, Sell, Investment & Fee %
+P4 --> P4 : Compute Units, Gross/Net Exit, Fee Amounts, ROI
+P4 --> user : Display Net Profit/Loss, ROI % & Status Badge
+
+P5 --> rssService : Request Feeds (Bitcoin.com, CoinTelegraph)
+rssService --> P5 : Parsed JSON News Articles
+P5 --> P5 : Sanitize HTML tags & truncate snippets
+P5 --> user : Render Streamed Intel & Trending Signals
+
+@enduml

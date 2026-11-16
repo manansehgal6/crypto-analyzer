@@ -1,0 +1,45 @@
+@startuml State_Machine
+
+title Crypto Analyzer - State Machine Diagram (SPA Client State Lifecycle)
+
+[*] --> Idle_Unloaded
+
+state Idle_Unloaded {
+  [*] --> DOM_Loading
+  DOM_Loading --> Bootstrap_Complete : DOMContentLoaded event fired
+}
+
+state Running {
+  state "Idle / Awaiting User Input" as Idle
+  state "Fetching_Coin_Details" as FetchingDetails
+  state "Fetching_Chart_Data" as FetchingChart
+  state "Rendering_Visuals" as RenderingVisuals
+  state "Search_Error_State" as SearchError
+
+  state "Analyzing_Trend" as AnalyzingTrend
+  state "Trend_Rendered" as TrendRendered
+
+  state "Calculating_PnL" as CalculatingPnL
+
+  [*] --> Idle
+  
+  Idle --> FetchingDetails : Click Search / Enter Asset
+  FetchingDetails --> FetchingChart : Details received
+  FetchingDetails --> SearchError : API 429 / 404 / Network Error
+  FetchingChart --> RenderingVisuals : Price history array received
+  FetchingChart --> SearchError : Chart endpoint error
+  RenderingVisuals --> Idle : Chart rendered & DOM updated
+  SearchError --> Idle : New search triggered
+
+  Idle --> AnalyzingTrend : Click "Analyze Trend"
+  AnalyzingTrend --> TrendRendered : 365d data processed & MA computed
+  AnalyzingTrend --> Idle : Timeout / API Error
+  TrendRendered --> Idle : Clear / New query
+
+  Idle --> CalculatingPnL : User inputs values / Clicks Calculate
+  CalculatingPnL --> Idle : Summary card & ROI badge updated
+}
+
+Running --> [*] : Tab closed / Page unload
+
+@enduml
